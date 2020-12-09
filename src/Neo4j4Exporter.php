@@ -57,7 +57,7 @@ class Neo4j4Exporter extends Exporter {
     if( false === ($this->rhandle = fopen( $relfile, "w")))
       throw new IOError( "There was an error opening $relfile for writing.");
 
-      fwrite( $this->nhandle, "id:ID{$this->csv_delim}label:LABEL{$this->csv_delim}type{$this->csv_delim}flags{$this->csv_delim}lineno:int{$this->csv_delim}code{$this->csv_delim}childnum:int{$this->csv_delim}funcid:int{$this->csv_delim}classname{$this->csv_delim}namespace{$this->csv_delim}endlineno:int{$this->csv_delim}name{$this->csv_delim}doccomment\n");
+      fwrite( $this->nhandle, "id:ID{$this->csv_delim}label:LABEL{$this->csv_delim}type{$this->csv_delim}flags:string[]{$this->csv_delim}lineno:int{$this->csv_delim}code{$this->csv_delim}childnum:int{$this->csv_delim}funcid:int{$this->csv_delim}classname{$this->csv_delim}namespace{$this->csv_delim}endlineno:int{$this->csv_delim}name{$this->csv_delim}doccomment\n");
       fwrite( $this->rhandle, "start:START_ID{$this->csv_delim}end:END_ID{$this->csv_delim}type:TYPE\n");
     
   }
