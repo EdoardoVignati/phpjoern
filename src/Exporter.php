@@ -23,6 +23,9 @@ abstract class Exporter {
   const JEXP_FORMAT = 1;
   /** Constant for GraphML format (supported by many tools) */
   const GRAPHML_FORMAT = 2;
+  /** Yea, this is very useful */
+  const NEO4J4_FORMAT = 3;
+
 
   /** Labels */
   const LABEL_FS = "Filesystem";

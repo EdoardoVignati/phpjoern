@@ -11,6 +11,7 @@ error_reporting( E_ALL & ~E_NOTICE);
 
 require_once 'Exporter.php';
 require_once 'CSVExporter.php';
+require_once 'Neo4j4Exporter.php';
 require_once 'GraphMLExporter.php';
 
 $path = null; // file/folder to be parsed
@@ -83,6 +84,9 @@ function parse_arguments() {
   if( isset( $options['format']) || isset( $options['f'])) {
     global $format;
     switch( $options['format'] ?? $options['f']) {
+	case "neo4j4":
+	  $format = Exporter::NEO4J4_FORMAT;
+	  break;
     case "jexp":
       $format = Exporter::JEXP_FORMAT;
       break;
@@ -159,7 +163,7 @@ function print_help() {
   echo 'Options:', PHP_EOL;
   echo '  -h, --help                 Display help message', PHP_EOL;
   echo '  -v, --version              Display version information', PHP_EOL;
-  echo '  -f, --format <format>      Format to use for the output files: "jexp" (default), "neo4j", or "graphml"', PHP_EOL;
+  echo '  -f, --format <format>      Format to use for the output files: "jexp" (default), "neo4j", "graphml" or "neo4j4"', PHP_EOL;
   echo '  -n, --nodes <file>         Output file for nodes (for CSV output, i.e., neo4j or jexp modes)', PHP_EOL;
   echo '  -r, --relationships <file> Output file for relationships (for CSV output, i.e., jexp or neo4j modes)', PHP_EOL;
   echo '  -o, --out <file>           Output file for entire graph (for XML output, i.e., graphml mode)', PHP_EOL;
@@ -182,7 +186,7 @@ function parse_file( $path, $exporter) : int {
   echo "Parsing file ", $finfo->getPathname(), PHP_EOL;
 
   try {
-    $ast = ast\parse_file( $path, $version = 30);
+    $ast = ast\parse_file( $path, $version = 80);
 
     // The above may throw a ParseError. We only export to the output
     // file(s) if that didn't happen.
@@ -292,7 +296,10 @@ if( is_file( $path)) {
   try {
     if( $format === Exporter::GRAPHML_FORMAT)
       $exporter = new GraphMLExporter( $outfile, $startcount);
-    else // either NEO4J_FORMAT or JEXP_FORMAT
+    else if( $format === Exporter::NEO4J4_FORMAT)
+      $exporter = new Neo4j4Exporter( $format, $nodefile, $relfile, $startcount);
+	else
+	  // either NEO4J_FORMAT or JEXP_FORMAT
       $exporter = new CSVExporter( $format, $nodefile, $relfile, $startcount);
   }
   catch( IOError $e) {
@@ -305,6 +312,8 @@ elseif( is_dir( $path)) {
   try {
     if( $format === Exporter::GRAPHML_FORMAT)
       $exporter = new GraphMLExporter( $outfile, $startcount);
+    else if( $format === Exporter::NEO4J4_FORMAT)
+      $exporter = new Neo4j4Exporter( $format, $nodefile, $relfile, $startcount);
     else // either NEO4J_FORMAT or JEXP_FORMAT
       $exporter = new CSVExporter( $format, $nodefile, $relfile, $startcount);
   }
