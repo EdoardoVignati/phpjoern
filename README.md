@@ -1,3 +1,23 @@
+# What is this fork used for?
+The following fork of phpjoern is intended to be a fix to the import process of the AST (nodex.csv and rels.csv) in recent versions of Neo4j (major version 4). 
+
+The tool has not been edited from the original version of Malte Skoruppa but it contains a new file, the ```Neo4j4Exporter``` that is able to format the csv files in such a way that Neo4j 4.x can read and import them correctly.
+
+You should follow the original installation instructions, run the parser ```./php2ast -f neo4j4 <phpsource>``` and then import into Neo4j using the ```neo4j-admin import tool```.
+
+You can also import the CPG edges if you are using the discontinued version of joern at this link https://github.com/octopus-platform/joern 
+
+Please note that joern is able to read only the original format of nodes.csv and rels.csv files in ouput from phpjoern. 
+
+Basically you will have to:
+- generate nodes and rels in the original format and feed joern. Output => cpg_edges.csv.
+- generate nodes and rels with the new ```neo4j4``` format ```./php2ast -f neo4j4 <phpsource>```. Output => nodes.csv, rels.csv
+- import in neo4j the previous output files
+
+```
+$ ./neo4j-admin import --nodes="nodes.csv" --relationships="rels.csv" --relationships="../import/cpg_edges.csv" --processors=<PROCESSORS> --high-io=true --max-memory=1G --delimiter="," --array-delimiter="TAB" --id-type="INTEGER"
+```
+
 # Archived - no longer maintained
 
 Please note that this project is no longer being maintained.
